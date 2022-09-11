@@ -4,9 +4,67 @@
 #include <stdlib.h>
 #include <time.h>
 #include <cstdlib>
-#include <iostream>
 
 using namespace std;
+int gameExit();
+void breakline(int line_num);
+void printTitle();
+void printRules();
+void setTextColor(int color, string text);
+void difficulty(int &x, int &y);
+void verifyResult(int& playerGuess, int& computerGuess, int& goalNumber);
+void result(int& playerGuess, int& computorGuess, int& goalNumber, bool& guessing);
+
+int main()
+{
+	int min_num = 0;
+	int max_num = 0;
+	int num;
+	string again;
+	bool guessing = true;
+	srand(time(NULL));
+	int player_guess;
+	int computor_guess;
+	string play;
+	printTitle();
+	breakline(1);
+	printRules();
+	breakline(1);
+	cout << "Play?\n";
+	cout << "y/n\n";
+	cin >> play;
+	cout << endl;
+
+	if (play == "y")
+	{
+		difficulty(min_num, max_num);
+		num = rand() % max_num + min_num;
+		
+		cout << "Game Start!\n";
+		while (guessing == true)
+		{
+			cout << "Make your guess!\n";
+			cin >> player_guess;
+			computor_guess = rand() % max_num + min_num;
+			result(player_guess, computor_guess, num, guessing);
+		}
+		cout << "Play again?" << endl;
+		cout << "y/n" << endl;
+		cin >> again;
+		if (again == "y")
+		{
+			main();
+		}
+		else
+		{
+			return 0;
+		}
+	}
+	else
+	{
+		return 0;
+	}
+}
 int gameExit()
 {
 	return 0;
@@ -45,8 +103,8 @@ void printRules()
 	breakline(2);
 	SetConsoleTextAttribute(hConsole, 6);
 	cout << "1. A Number is randomly generated.\n";
-	cout << "2. You and a Computor try to guess what the number is.\n";
-	cout << "3. Closest guess wins.\n";
+	cout << "2. You and a Computer try to guess what the number is.\n";
+	cout << "3. First to guess it wins.\n";
 	SetConsoleTextAttribute(hConsole, 7);
 }
 void setTextColor(int color, string text)
@@ -70,129 +128,97 @@ void difficulty(int &x, int &y)
 	cout << "[2] Hard (between 1 and 1000.)" << endl;
 	cout << "[3] Custom  (you decide.)" << endl;
 	cin >> diff;
-	if (diff == 0)
+	switch (diff)
+	{
+	case 0:
 	{
 		x = 1;
 		y = 10;
 	}
-	else if (diff == 1)
+	case 1:
 	{
 		x = 1;
 		y = 100;
 	}
-	else if (diff == 2)
+	case 2:
 	{
 		x = 1;
 		y = 1000;
 	}
-	else if (diff == 3)
+	case 3:
 	{
-		cout << "Enter the minimum number." << endl;
+		cout << "Enter the minimum number.\n";
 		cin >> x;
-		cout << endl;
-		cout << "The minimum number is " << x << "." << endl;
-		cout << "Enter the maximum number." << endl;
+		cout << "\n";
+		cout << "Enter the maximum number.\n";
 		cin >> y;
-		cout << endl;
-		cout << "The maximum number is " << y << "." << endl;
+		cout << "\n";
+		cout << "The minimum number is " << x << ".\n";
+		cout << "The maximum number is " << y << ".\n";
 	}
-	else
+	default:
 	{
 		SetConsoleTextAttribute(hConsole, red);
 		cout << "Please choose a valid option." << endl;
 		SetConsoleTextAttribute(hConsole, white);
 		gameExit();
 	}
+	}
 }
-void result(int playerGuess, int computorGuess, int goalNumber)
+void verifyResult(int& playerGuess, int& computerGuess, int& goalNumber, bool& guessing)
+{
+	if (playerGuess == goalNumber && computerGuess != goalNumber)
+	{
+		cout << "You win! " << "The Number was " << goalNumber << endl;
+		guessing = false;
+	}
+	else if (playerGuess != goalNumber && computerGuess == goalNumber)
+	{
+		cout << "The computer wins!" << "The Number was " << goalNumber << endl;
+		guessing = false;
+	}
+	else if (playerGuess == goalNumber && computerGuess == goalNumber)
+		{
+		cout << "It's a draw!" << "The Number was " << goalNumber << endl;
+		guessing = false;
+	}
+}
+void result(int& playerGuess, int& computorGuess, int& goalNumber, bool& guessing)
 {
 	int playerScore, computorScore, holdP, holdC;
 	holdP = goalNumber - playerGuess;
 	holdC = goalNumber - computorGuess;
-	playerScore = abs(holdP);
-	computorScore = abs(holdC);
-	if (playerScore > computorScore)
+	// abs == absolute
+	if (playerGuess > goalNumber && computorGuess != goalNumber)
 	{
-		cout << "You lose!" << endl;
-		cout << "The Number was " << goalNumber << ".\nYour Guess was off by " << playerScore << ".\nThe Computor guessed " << computorGuess;
-		if (computorGuess == goalNumber)
+		cout << "Your Guess was too large!\n";
+		cout << "The Computor guessed " << computorGuess;
+		if (computorGuess > goalNumber)
 		{
-			cout << ".\nThe computor got the right number!\n";
+			cout << ".\nThe computor's guess was too large!\n";
 		}
-		else if (computorGuess != goalNumber)
+		else if (computorGuess < goalNumber)
 		{
-			cout << ".\nThe computer was off by " << computorScore << "." << endl;
+			cout << ".\nThe computer's guess was too small!\n";
 		}
 	}
-	else if (playerScore < computorScore)
+	else if (playerGuess < goalNumber && computorGuess != goalNumber)
 	{
-		cout << "You Win!" << endl;
-		cout << "The Number was " << goalNumber << ".\nThe Computor guessed " << computorGuess << ".\nIt's guess was off by " << computorScore << "." << endl;
-		if (playerGuess == goalNumber)
+		cout << "Your guess was too small" << endl;
+		cout << "The Computor guessed " << computorGuess;
+		if (computorGuess > goalNumber)
 		{
-			cout << "You got the right number!\n";
+			cout << ".\nThe computor's guess was too large!\n";
 		}
-		else if (playerGuess != goalNumber)
+		else if (computorGuess < goalNumber)
 		{
-			cout << "You were off by " << playerScore << "." << endl;
+			cout << ".\nThe computer's guess was too small!\n";
 		}
+	
 	}
-	else if (playerScore == computorScore)
+	else if (playerGuess == goalNumber || computorGuess == goalNumber)
 	{
-		cout << "It's a draw!" << endl;
-		cout << "The Number was " << goalNumber << ".\nThe Computor guessed " << computorGuess << ".\nYou guessed " << playerGuess << "." << endl;
-		if (playerGuess == goalNumber)
-		{
-			cout << "You both got the right number!\n";
-		}
-		else if (playerGuess != goalNumber)
-		{
-			cout << "You were both off by " << playerScore << "." << endl;
-		}
+		verifyResult(playerGuess, computorGuess, goalNumber, guessing);
 	}
 }
 
-int main()
-{
-	int min_num = 0;
-	int max_num = 0;
-	int num;
-	string again;
-	srand(time(NULL));
-	int player_guess;
-	int computor_guess;
-	string play;
-	printTitle();
-	breakline(1);
-	printRules();
-	breakline(1);
-	cout << "Play?" << endl;
-	cout << "y/n" << endl;
-	cin >> play;
-	cout << endl;
-
-	if (play == "y")
-	{
-		difficulty(min_num, max_num);
-		num = rand() % max_num + min_num;
-		computor_guess = rand() % max_num + min_num;
-		cout << "Game Start!\n";
-		cout << "Make your guess!\n";
-		cin >> player_guess;
-		result(player_guess, computor_guess, num);
-		cout << "Play again?" << endl;
-		cout << "y/n" << endl;
-		cin >> again;
-		if (again == "y")
-		{
-			main();
-		}
-		else
-			return 0;
-	}
-	else
-		return 0;
-}
-
-// We gave up, just add another few functions and call it a day.
-// nvm learned how to use  references
