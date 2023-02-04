@@ -130,23 +130,26 @@ void difficulty(int &x, int &y)
 	cin >> diff;
 	switch (diff)
 	{
-	case 0:
-	{
+		case 0:
+		{
 		x = 1;
 		y = 10;
-	}
-	case 1:
-	{
+		break;
+		}
+		case 1:
+		{
 		x = 1;
 		y = 100;
-	}
-	case 2:
-	{
+		break;
+		}
+		case 2:
+		{
 		x = 1;
 		y = 1000;
-	}
-	case 3:
-	{
+		break;
+		}
+		case 3:
+		{
 		cout << "Enter the minimum number.\n";
 		cin >> x;
 		cout << "\n";
@@ -155,7 +158,8 @@ void difficulty(int &x, int &y)
 		cout << "\n";
 		cout << "The minimum number is " << x << ".\n";
 		cout << "The maximum number is " << y << ".\n";
-	}
+		break;
+		}
 	default:
 	{
 		SetConsoleTextAttribute(hConsole, red);
